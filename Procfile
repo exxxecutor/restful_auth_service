@@ -1,0 +1,1 @@
+web: gunicorn final_auth.wsgi --log-file -
