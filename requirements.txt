@@ -1,0 +1,4 @@
+django >= 1.0.0
+django-allauth
+djangorestframework
+djangorestframework-simplejwt
