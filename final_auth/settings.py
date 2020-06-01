@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'allauth.account',  # provides Email model w/ confirmation (users can have several emails if needed)
     'allauth.socialaccount',  # provides social account connectivity as well as social login flow
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
     'users',
 ]
 

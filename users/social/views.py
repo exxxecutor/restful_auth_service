@@ -1,4 +1,8 @@
 from allauth.socialaccount.providers.oauth2.views import OAuth2View
+from django.views.generic import TemplateView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class RestfulOAuth2CallbackView(OAuth2View):
@@ -23,6 +27,9 @@ class RestfulOAuth2CallbackView(OAuth2View):
                                                 token,
                                                 response=access_token)
             login.token = token
+            # saves user instance, social account
+            login.save()
+            refresh = RefreshToken.for_user(login.user)
             # if self.adapter.supports_state:
             #     login.state = SocialLogin \
             #         .verify_and_unstash_state(
@@ -30,12 +37,16 @@ class RestfulOAuth2CallbackView(OAuth2View):
             #         get_request_param(request, 'state'))
             # else:
             #     login.state = SocialLogin.unstash_state(request)
-            return complete_social_login(request, login)
-        except (PermissionDenied,
-                OAuth2Error,
-                RequestException,
-                ProviderException) as e:
-            return render_authentication_error(
-                request,
-                self.adapter.provider_id,
-                exception=e)
+            # todo return access and refresh token
+            return Response({
+                'refresh': refresh,
+                'access': refresh.access,
+            })
+        except Exception as e:  # PermissionDenied, OAuth2Error, RequestException, ProviderException
+            return Response({
+                "detail": e.args,
+            }, status=status.HTTP_409_CONFLICT)
+
+
+class SocialLoginTestView(TemplateView):
+    template_name = 'test/social.html'
