@@ -20,11 +20,13 @@
         }
 
         var client = new HttpClient();
-        client.get(window.location.href.split('/').slice(0, -1).join('/'),
+        url = window.location.href;
+        query_params = url.slice(url.search('?'));
+        client.get(window.location.href.split('/').slice(0, -1).join('/') + query_params,
         function (response) {
             window.document.body.append(response['access']);
             window.document.body.append(response['refresh']);
-        })
+        });
     </script>
 </body>
 </html>
