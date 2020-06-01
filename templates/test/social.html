@@ -6,6 +6,7 @@
 </head>
 <body>
     <script>
+
         var HttpClient = function() {
             this.get = function(aUrl, aCallback) {
                 var anHttpRequest = new XMLHttpRequest();
@@ -21,7 +22,7 @@
 
         var client = new HttpClient();
         url = window.location.href;
-        query_params = url.slice(url.search('?'));
+        query_params = url.slice(url.indexOf('?'));
         client.get(window.location.href.split('/').slice(0, -1).join('/') + query_params,
         function (response) {
             window.document.body.append(response['access']);
