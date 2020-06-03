@@ -22,11 +22,14 @@
 
         var client = new HttpClient();
         url = window.location.href;
+        const urlParams = new URLSearchParams(window.location.search);
+        const provider = urlParams.get('provider');
         query_params = url.slice(url.indexOf('?'));
-        client.get(window.location.href.split('/').slice(0, -1).join('/') + query_params,
+        client.get(window.location.href.split('/').slice(0, -2).join('/') + `/${provider}/?code=${urlParams.get('code')}`,
         function (response) {
-            window.document.body.append(response['access']);
-            window.document.body.append(response['refresh']);
+            response = JSON.parse(response);
+            window.document.write(response.access + "\n");
+            window.document.write(response.refresh);
         });
     </script>
 </body>

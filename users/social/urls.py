@@ -1,11 +1,13 @@
 from django.urls import path, include
 from .views import RestfulOAuth2CallbackView, SocialLoginTestView
-from .adapter import (
+from .adapters import (
     FacebookAdapter,
     GoogleAdapter,
     DiscordAdapter
 )
 from rest_framework.decorators import api_view
+
+# SOCIAL_LOGIN_CALLBACK_NAME = 'social_login_callback'
 
 social_login_urls = [
     path('google/',
@@ -16,11 +18,8 @@ social_login_urls = [
          name='facebook_login'),
     path('discord/',
          api_view(http_method_names=['GET'])(RestfulOAuth2CallbackView.adapter_view(DiscordAdapter)),
-         name='facebook_login'),
+         name='discord_login'),
     # to_delete, used for social login testing, replaces front-end web app part
-    # path('google/test', SocialLoginTestView.as_view(), name='google_callback'),
-    # path('facebook/test', SocialLoginTestView.as_view(), name='facebook_callback'),
-    # path('discord/test', SocialLoginTestView.as_view(), name='discord_callback'),
     path('test/', SocialLoginTestView.as_view(), name='social_login_callback'),
 ]
 

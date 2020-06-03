@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',  # provides social account connectivity as well as social login flow
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.discord',
     'users',
 ]
 
