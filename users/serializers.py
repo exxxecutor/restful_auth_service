@@ -54,4 +54,4 @@ class TokenSignupSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['email']
+        fields = ['username']

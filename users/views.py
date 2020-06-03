@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,6 +11,7 @@ from .serializers import (
 )
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
+from allauth.account.forms import ResetPasswordForm
 
 
 class TokenSignupView(TokenViewBase):
@@ -44,3 +47,35 @@ class LogoutView(APIView):
         token.blacklist()
         return Response(status=status.HTTP_200_OK)
 
+
+class ResetPasswordView(APIView):
+
+    def post(self, request):
+        try:
+            assert 'email' in request.data
+            form = ResetPasswordForm(request.data)
+            if form.is_valid():
+                form.save()
+            else:
+                raise ValidationError("Invalid email address")
+
+        except AssertionError:
+            return Response({
+                'detail': "'email' field is not provided"
+            }, status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordView(APIView):
+    authentication_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        if 'password' not in request:
+            return Response({
+                'detail': "'password' is not provided"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if request.user.check_password(request.data['password']):
+            request.user.set_password(request.data['password'])
+            return Response()
+        else:
+            return ValidationError("passwords didn't match")
