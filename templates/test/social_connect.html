@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button onclick="execute()">Execute!</button>
+<script>
+    function execute() {
+        const protocol = window.location.protocol;
+        const hostname = window.location.hostname;
+        const port = window.location.port;
+        const site_url = `${protocol}//${hostname}:${port}`
+        const urlParams = new URLSearchParams(window.location.search);
+        const provider = urlParams.get('provider');
+        const process = urlParams.get('process');
+        let access_token = "";
+        if (process === "connect") {
+            {#obtain an access token#}
+            let user_credentials = JSON.stringify({
+                username: "itworks!",
+                password: "123"
+            });
+            let access_xhr = new XMLHttpRequest();
+            let url = site_url + "/auth/login/"
+            access_xhr.open("POST", url, false);
+            access_xhr.setRequestHeader('Content-type', 'application/json');
+            access_xhr.onreadystatechange = function () {
+                if(Math.trunc(access_xhr.status / 100) === 2) {
+                    {# let it also pass a refresh token, idc, to_delete in future #}
+                    access_token = JSON.parse(access_xhr.responseText).access;
+                }
+            };
+            access_xhr.send(user_credentials);
+        }
+
+        let xhr = new XMLHttpRequest();
+        let url = `${site_url}/auth/social/${provider}/?code=${urlParams.get('code')}&process=${process}`;
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader('Content-type', 'application/json');
+        if (access_token) {
+            xhr.setRequestHeader('Authorization', `Bearer ${access_token}`);
+        }
+
+        xhr.onreadystatechange = function () {
+            if(Math.trunc(xhr.status / 100) === 2) {
+                document.write(xhr.responseText);
+            }
+        };
+
+        xhr.send();
+    }
+
+</script>
+</body>
+</html>
